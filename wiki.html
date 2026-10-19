@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr" class="client-js h-full select-none sm:select-text">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Rinascimento - Wikipedia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome per le icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts ufficiali di Wikipedia -->
+    <link href="https://fonts.googleapis.com/css2?family=Linux+Libertine:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Lato, Helvetica, Arial, sans-serif;
+            color: #202122;
+            background-color: #f8f9fa;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .wiki-header-font { font-family: 'Linux Libertine', 'Georgia', 'Times New Roman', serif; }
+        .wiki-link { color: #36c; text-decoration: none; }
+        .wiki-toc { background-color: #f8f9fa; border: 1px solid #a2a9b1; padding: 10px 14px; display: inline-block; min-width: 220px; font-size: 0.85em; }
+        .wiki-infobox { border: 1px solid #a2a9b1; background-color: #f8f9fa; color: #202122; margin: 0.5em 0 0.5em 1em; padding: 0.2em; float: right; clear: right; width: 20em; font-size: 88%; line-height: 1.5em; }
+        .wa-bg { background-color: #efeae2; background-image: radial-gradient(#d1c7bd 0.75px, transparent 0.75px); background-size: 12px 12px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #bbb; border-radius: 3px; }
+        body div:has(a[href*="netlify.com"]), 
+        a[href*="netlify.com"] {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body class="h-full w-full flex flex-col overflow-hidden bg-[#f8f9fa]">
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 1: WIKIPEDIA (COPERTINA INCOGNITA PER IPAD) -->
+    <!-- ================================================================= -->
+    <div id="wikipedia-screen" class="h-full w-full flex flex-col overflow-hidden bg-white text-[#202122] relative">
+        
+        <header class="bg-[#f8f9fa] border-b border-[#a2a9b1] px-4 py-2 flex items-center justify-between text-xs shrink-0 select-none">
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleWikiMenu()" class="text-[#54595d] p-1.5 focus:outline-none">
+                    <i class="fa-solid fa-bars text-base"></i>
+                </button>
+                
+                <!-- GANCIO SEGRETO: Tieni premuto o fai doppio tap sulla W -->
+                <div id="secret-logo-trigger" class="flex items-center space-x-2 cursor-pointer p-1 rounded active:bg-gray-200/50">
+                    <span class="wiki-header-font text-2xl font-bold leading-none text-black">W</span>
+                    <div>
+                        <span class="wiki-header-font text-sm font-bold block leading-none tracking-tight">WIKIPEDIA</span>
+                        <span class="text-[8px] text-[#54595d] tracking-widest uppercase">L'enciclopedia libera</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 max-w-xs md:max-w-md mx-3">
+                <div class="relative flex items-center">
+                    <i id="secret-search-icon" class="fa-solid fa-magnifying-glass absolute left-3 text-gray-400 text-xs p-1"></i>
+                    <input type="text" value="Rinascimento" readonly class="w-full bg-white border border-[#a2a9b1] rounded-sm pl-8 pr-3 py-1.5 text-xs focus:outline-none border-gray-300">
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 text-[#36c]">
+                <span class="wiki-link hidden sm:inline text-xs">Crea utenza</span>
+                <span class="wiki-link font-medium text-xs">Entra</span>
+            </div>
+        </header>
+
+        <div class="bg-white border-b border-[#a2a9b1] px-4 md:px-8 py-1.5 text-xs flex items-center justify-between shrink-0 select-none">
+            <div class="flex space-x-4 md:space-x-6">
+                <span class="font-bold border-b-2 border-[#36c] pb-1 text-[#202122]">Voce</span>
+                <span class="wiki-link">Discussione</span>
+            </div>
+            <div class="flex space-x-3 md:space-x-5 text-[#36c]">
+                <span class="font-bold border-b-2 border-[#36c] pb-1 text-[#202122]">Leggi</span>
+                <span class="wiki-link">Modifica</span>
+                <span class="wiki-link hidden sm:inline">Wikitesto</span>
+                <span class="wiki-link">Cronologia</span>
+            </div>
+        </div>
+
+        <div class="flex-1 flex overflow-hidden">
+            <aside id="wiki-sidebar" class="w-44 bg-[#f8f9fa] border-r border-[#a2a9b1] p-3 text-[11px] space-y-4 shrink-0 hidden lg:block overflow-y-auto select-none">
+                <div>
+                    <div class="text-[#54595d] font-bold border-b border-[#a2a9b1] pb-1 mb-1">Pagina principale</div>
+                    <ul class="space-y-1.5 text-[#36c]">
+                        <li><a href="#" class="hover:underline">Ultime modifiche</a></li>
+                        <li><a href="#" class="hover:underline">Una voce a caso</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <main class="flex-1 overflow-y-auto px-4 md:px-10 py-6 bg-white">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="wiki-header-font text-3xl md:text-4xl border-b border-[#a2a9b1] pb-1 mb-1 font-normal text-black">
+                        Rinascimento
+                    </h1>
+                    <div class="text-[11px] text-[#54595d] mb-4">Da Wikipedia, l'enciclopedia libera.</div>
+
+                    <div class="wiki-infobox shadow-xs hidden sm:block">
+                        <div class="text-center font-bold wiki-header-font text-base bg-[#eaecf0] p-1 border-b border-[#a2a9b1]">Rinascimento</div>
+                        <div class="p-2 text-center bg-white border-b border-[#a2a9b1]">
+                            <div class="w-full h-36 bg-[#f8f9fa] border border-[#a2a9b1] flex flex-col items-center justify-center text-gray-500 text-xs">
+                                <i class="fa-solid fa-landmark text-3xl mb-1 text-amber-900"></i>
+                                <span class="italic text-[10px]">L'Uomo Vitruviano (Leonardo da Vinci)</span>
+                            </div>
+                        </div>
+                        <table class="w-full text-xs">
+                            <tr class="border-b border-gray-200">
+                                <th class="p-1 bg-[#f8f9fa] text-left w-1/3">Periodo:</th>
+                                <td class="p-1">XIV – XVI secolo</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <th class="p-1 bg-[#f8f9fa] text-left">Origine:</th>
+                                <td class="p-1"><span class="wiki-link">Firenze</span>, <span class="wiki-link">Italia</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p class="text-sm md:text-base leading-relaxed mb-4">
+                        Il <strong class="font-bold">Rinascimento</strong> è stato un periodo artistico e culturale della storia d'Europa che si sviluppò a partire da <span class="wiki-link">Firenze</span> tra la fine del <span class="wiki-link">Medioevo</span> e l'inizio dell'<span class="wiki-link">età moderna</span>.
+                    </p>
+                    <p class="text-sm md:text-base leading-relaxed mb-4">
+                        Vissuto dalla maggior parte dei suoi protagonisti come un'epoca di cambiamento, comportò un nuovo modo di concepire il mondo e se stessi.
+                    </p>
+
+                    <footer class="mt-12 pt-6 border-t border-[#a2a9b1] text-xs text-[#54595d] space-y-2">
+                        <p>Questa pagina è stata modificata l'ultima volta il 19 ottobre 2026 alle 14:22.</p>
+                    </footer>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- SCREEN 2: CHAT WHATSAPP COLLEGATA A FIREBASE -->
+    <!-- ================================================================= -->
+    <div id="chat-screen" class="h-full w-full flex flex-col bg-[#f0f2f5] hidden relative">
+        
+        <header class="bg-[#075e54] text-white px-3 py-2.5 flex items-center justify-between shadow-md shrink-0 z-10 select-none">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#128c7e] border-2 border-white/80 flex items-center justify-center font-bold text-white text-sm shrink-0">
+                    <i class="fa-solid fa-user-secret"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-sm md:text-base leading-tight">Riccardo & Loredana</h2>
+                    <p class="text-[10px] md:text-[11px] text-emerald-200 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Online (Cloud)
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="bg-black/25 p-1 rounded-xl flex items-center space-x-1 border border-white/20">
+                    <button id="btn-user-riccardo" onclick="setSender('Riccardo')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[#25d366] text-white shadow-xs transition-all active:scale-95">
+                        Riccardo
+                    </button>
+                    <button id="btn-user-loredana" onclick="setSender('Loredana')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all active:scale-95">
+                        Loredana
+                    </button>
+                </div>
+
+                <button onclick="closeChatScreen()" class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span class="hidden sm:inline">Wikipedia</span>
+                </button>
+            </div>
+        </header>
+
+        <main id="chat-messages-container" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 wa-bg">
+            <!-- I messaggi arriveranno in tempo reale dal database Firebase -->
+        </main>
+
+        <footer class="bg-[#f0f2f5] px-3 py-2 flex items-center space-x-2 border-t border-gray-300 shrink-0 pb-safe">
+            <button class="text-gray-500 p-2 text-xl focus:outline-none">
+                <i class="fa-regular fa-face-smile"></i>
+            </button>
+            
+            <form id="chat-form" onsubmit="sendMessage(event)" class="flex-1 flex items-center">
+                <input type="text" id="chat-input-text" placeholder="Scrivi un messaggio..." autocomplete="off" class="w-full py-2.5 px-4 text-sm md:text-base bg-white rounded-full border border-gray-300 focus:outline-none focus:border-[#128c7e] shadow-xs">
+            </form>
+
+            <button onclick="sendMessage(event)" class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-[#128c7e] active:bg-[#075e54] text-white flex items-center justify-center transition-transform active:scale-90 shadow-md shrink-0">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
+            </button>
+        </footer>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- FIREBASE & LOGICA APPLICAZIONE -->
+    <!-- ================================================================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configurazione Firebase inserita
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdVEKtUq4b_dZ685HCjk4vWo-pM0CL3vY",
+            authDomain: "wikipedia-abb2b.firebaseapp.com",
+            projectId: "wikipedia-abb2b",
+            storageBucket: "wikipedia-abb2b.firebasestorage.app",
+            messagingSenderId: "931287859763",
+            appId: "1:931287859763:web:e559b04e571c137c9dd946",
+            measurementId: "G-M6GL3G6C4Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentSender = 'Riccardo';
+
+        window.setSender = function(senderName) {
+            currentSender = senderName;
+            const btnRiccardo = document.getElementById('btn-user-riccardo');
+            const btnLoredana = document.getElementById('btn-user-loredana');
+
+            if (currentSender === 'Riccardo') {
+                btnRiccardo.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-[#25d366] text-white shadow-xs transition-all active:scale-95";
+                btnLoredana.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all active:scale-95";
+            } else {
+                btnLoredana.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-[#25d366] text-white shadow-xs transition-all active:scale-95";
+                btnRiccardo.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all active:scale-95";
+            }
+        };
+
+        // Gesti touch segreti per iPad sulla W
+        let touchTimer = null;
+        const LONG_PRESS_DURATION = 800;
+        let lastTapTime = 0;
+
+        window.onload = function() {
+            setupTouchTriggers();
+            listenToMessages();
+        };
+
+        function setupTouchTriggers() {
+            const logoTrigger = document.getElementById('secret-logo-trigger');
+            const searchIconTrigger = document.getElementById('secret-search-icon');
+            setupGesture(logoTrigger);
+            setupGesture(searchIconTrigger);
+        }
+
+        function setupGesture(element) {
+            if (!element) return;
+            element.addEventListener('touchstart', function() {
+                touchTimer = setTimeout(() => { openChatScreen(); }, LONG_PRESS_DURATION);
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTapTime;
+                if (tapLength < 300 && tapLength > 0) {
+                    clearTimeout(touchTimer);
+                    openChatScreen();
+                }
+                lastTapTime = currentTime;
+            }, { passive: true });
+
+            element.addEventListener('touchend', () => clearTimeout(touchTimer), { passive: true });
+            element.addEventListener('touchmove', () => clearTimeout(touchTimer), { passive: true });
+            element.addEventListener('dblclick', () => openChatScreen());
+        }
+
+        function openChatScreen() {
+            document.getElementById('wikipedia-screen').classList.add('hidden');
+            document.getElementById('chat-screen').classList.remove('hidden');
+            setTimeout(() => document.getElementById('chat-input-text').focus(), 100);
+            scrollToBottom();
+        }
+
+        window.closeChatScreen = function() {
+            document.getElementById('chat-screen').classList.add('hidden');
+            document.getElementById('wikipedia-screen').classList.remove('hidden');
+        };
+
+        // --- INVIO MESSAGGIO SU FIREBASE ---
+        window.sendMessage = async function(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('chat-input-text');
+            const text = input.value.trim();
+            if (!text) return;
+
+            try {
+                await addDoc(collection(db, "messages"), {
+                    sender: currentSender,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+                input.value = '';
+            } catch (err) {
+                console.error("Errore di invio al database: ", err);
+            }
+        };
+
+        // --- ASCOLTO TEMPO REALE DA FIRESTORE ---
+        function listenToMessages() {
+            const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+            onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('chat-messages-container');
+                container.innerHTML = '';
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="text-center my-6">
+                            <span class="bg-white/90 text-gray-600 text-xs px-3 py-1.5 rounded-lg shadow-xs font-medium">
+                                Nessun messaggio nel database. Inizia a chattare!
+                            </span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const isMe = data.sender === currentSender;
+                    const msgWrapper = document.createElement('div');
+                    msgWrapper.className = `flex flex-col ${data.sender === currentSender ? 'items-end' : 'items-start'}`;
+
+                    let timeStr = "";
+                    if (data.timestamp && data.timestamp.toDate) {
+                        const d = data.timestamp.toDate();
+                        timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                    }
+
+                    const nameColor = data.sender === 'Riccardo' ? 'text-[#128c7e]' : 'text-purple-700';
+
+                    msgWrapper.innerHTML = `
+                        <div class="max-w-[85%] sm:max-w-[75%] rounded-2xl px-3.5 py-2 text-sm md:text-base shadow-xs relative ${data.sender === currentSender ? 'bg-[#d9fdd3] text-[#111b21] rounded-tr-none' : 'bg-white text-[#111b21] rounded-tl-none'}">
+                            <div class="text-[11px] font-bold ${nameColor} mb-0.5 select-none">
+                                <span>${data.sender}</span>
+                            </div>
+                            <p class="leading-snug break-words">${escapeHtml(data.text)}</p>
+                            <div class="flex items-center justify-end space-x-1 mt-0.5 text-[10px] text-gray-500 select-none">
+                                <span>${timeStr}</span>
+                                <i class="fa-solid fa-check-double text-[#53bdeb] text-[11px]"></i>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(msgWrapper);
+                });
+                scrollToBottom();
+            });
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-messages-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.toggleWikiMenu = function() {
+            document.getElementById('wiki-sidebar').classList.toggle('hidden');
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
